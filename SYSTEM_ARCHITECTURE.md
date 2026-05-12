@@ -192,7 +192,7 @@ Embedding dimension:
 Answer generation:
 
 ```
-OpenAI API
+Anthropic Claude (claude-haiku-4-5)
 ```
 
 Used for:
@@ -208,13 +208,13 @@ Used for:
 Framework:
 
 ```
-LangGraph
+Custom RAG service (modules/chat/chat.service.ts)
 ```
 
 Purpose:
 
 - multi-step reasoning pipeline
-- RAG orchestration
+- RAG orchestration handled inside modules/chat/chat.service.ts
 
 ---
 

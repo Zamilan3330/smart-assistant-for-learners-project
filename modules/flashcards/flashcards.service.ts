@@ -57,8 +57,21 @@ function applySm2(state: Sm2State, rating: FlashcardRating): Sm2State {
   return { repetitions, easeFactor, intervalDays }
 }
 
-function cardHash(front: string): string {
-  return createHash('sha256').update(front).digest('hex').slice(0, 64)
+function normalizeCardFront(text: string): string {
+  return text
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/[?？!！.。,]/g, '')
+    // Mongolian script variants of common IT terms → canonical Latin
+    .replace(/трайд|триад|трiad/gi, 'triad')
+    .replace(/аутентик|authentik/gi, 'authentic')
+}
+
+function cardHash(front: string, kuCode?: string): string {
+  const normalized = normalizeCardFront(front)
+  const key = `${kuCode ?? 'general'}:${normalized}`
+  return createHash('sha256').update(key).digest('hex').slice(0, 64)
 }
 
 function addDays(date: Date, days: number): Date {
@@ -223,7 +236,7 @@ function parseCardJson(raw: string): Array<{ front: string; back: string; hint?:
 export async function reviewFlashcard(
   params: ReviewFlashcardParams,
 ): Promise<ReviewFlashcardResult> {
-  const hash = cardHash(params.front)
+  const hash = cardHash(params.front, params.kuCode || params.kaCode)
   const isCorrect = params.rating !== 'again'
 
   // Load existing SM-2 state or use defaults

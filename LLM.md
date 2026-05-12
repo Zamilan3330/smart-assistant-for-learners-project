@@ -4,8 +4,6 @@
 Version: 1.0
 Audience: AI / Backend Implementation Agent
 
----
-
 # 1. PURPOSE
 
 This document defines **everything the AI agent needs to implement the system end-to-end**.
@@ -22,8 +20,6 @@ The AI must:
 - provide citations
 - track user mastery
 
----
-
 # 2. SYSTEM CORE PRINCIPLES
 
 ## 2.1 Source-grounded answers
@@ -33,8 +29,6 @@ LLM must:
 - prioritize user uploaded sources
 - avoid hallucination
 - explicitly say when information is missing
-
----
 
 ## 2.2 Retrieval-first architecture
 
@@ -47,8 +41,6 @@ Knowledge comes from:
 
 - document_chunks (Weaviate)
 
----
-
 ## 2.3 Curriculum awareness
 
 Every question and chunk must be mapped to:
@@ -58,8 +50,6 @@ Knowledge Area (KA)
 Knowledge Unit (KU)
 ```
 
----
-
 ## 2.4 Personalization
 
 System tracks:
@@ -68,8 +58,6 @@ System tracks:
 user → KU mastery → KA mastery
 ```
 
----
-
 # 3. SYSTEM COMPONENTS
 
 ## 3.1 Data Sources
@@ -77,8 +65,6 @@ user → KU mastery → KA mastery
 - PDF documents
 - plain text
 - (future: audio → STT)
-
----
 
 ## 3.2 Storage
 
@@ -99,8 +85,6 @@ Vector search:
 - embeddings
 - retrieval metadata
 
----
-
 ## 3.3 AI Stack
 
 ### Embedding
@@ -112,16 +96,14 @@ BAAI/bge-m3 (local CPU)
 ### LLM
 
 ```text
-OpenAI API
+Anthropic Claude (claude-haiku-4-5)
 ```
 
 ### Orchestration
 
 ```text
-LangGraph
+Custom RAG service (modules/chat/chat.service.ts)
 ```
-
----
 
 # 4. DATA MODEL (IMPORTANT)
 
@@ -137,8 +119,6 @@ LangGraph
 }
 ```
 
----
-
 ## 4.2 Chunk
 
 ```json
@@ -153,8 +133,6 @@ LangGraph
 }
 ```
 
----
-
 ## 4.3 Chat Message
 
 ```json
@@ -168,8 +146,6 @@ LangGraph
 }
 ```
 
----
-
 ## 4.4 Citation
 
 ```json
@@ -182,8 +158,6 @@ LangGraph
 }
 ```
 
----
-
 ## 4.5 Mastery
 
 ```json
@@ -193,8 +167,6 @@ LangGraph
   "score": 0.65
 }
 ```
-
----
 
 # 5. DOCUMENT INGESTION PIPELINE
 
@@ -209,8 +181,6 @@ Save:
 - file → filesystem
 - metadata → DB
 
----
-
 ## Step 2: Parse PDF
 
 Extract:
@@ -222,8 +192,6 @@ page → text
 Store in:
 
 - document_pages
-
----
 
 ## Step 3: Chunking
 
@@ -237,8 +205,6 @@ overlap: 100 tokens
 Output:
 
 - document_chunks
-
----
 
 ## Step 4: Embedding (IMPORTANT)
 
@@ -256,8 +222,6 @@ for each page:
     store vectors
 ```
 
----
-
 ## Step 5: Index to Weaviate
 
 Store:
@@ -274,8 +238,6 @@ Store:
 }
 ```
 
----
-
 # 6. QUESTION PROCESSING PIPELINE
 
 ## Step 1: User asks question
@@ -283,8 +245,6 @@ Store:
 ```text
 "What is normalization?"
 ```
-
----
 
 ## Step 2: Classification (KA/KU)
 
@@ -297,15 +257,11 @@ LLM must output:
 }
 ```
 
----
-
 ## Step 3: Query Embedding
 
 ```text
 embed(question)
 ```
-
----
 
 ## Step 4: Retrieval
 
@@ -318,8 +274,6 @@ filter:
   (optional: ka_code)
 ```
 
----
-
 ## Step 5: Context Building
 
 Select:
@@ -327,8 +281,6 @@ Select:
 ```text
 top 4 chunks
 ```
-
----
 
 ## Step 6: Answer Generation
 
@@ -340,8 +292,6 @@ LLM must:
 - cite sources
 - not invent facts
 - explain clearly
-
----
 
 ### Prompt template
 
@@ -361,8 +311,6 @@ Question:
 Answer:
 ```
 
----
-
 ## Step 7: Citation Generation
 
 For each used chunk:
@@ -375,16 +323,12 @@ For each used chunk:
 }
 ```
 
----
-
 ## Step 8: Save Chat
 
 Insert:
 
 - chat_messages
 - message_citations
-
----
 
 ## Step 9: Mastery Update
 
@@ -395,8 +339,6 @@ KU score += small delta
 KA aggregated
 ```
 
----
-
 # 7. MASTERy SYSTEM
 
 ## Evidence Sources
@@ -406,8 +348,6 @@ KA aggregated
 | Chat      | Low    |
 | Flashcard | Medium |
 | Quiz      | High   |
-
----
 
 ## Update Logic
 
@@ -421,17 +361,13 @@ if wrong:
     -0.02
 ```
 
----
-
 ## Aggregation
 
 ```text
 KA score = avg(KU scores)
 ```
 
----
-
-# 8. LANGGRAPH FLOW
+# 8. CUSTOM RAG FLOW
 
 ```text
 START
@@ -448,8 +384,6 @@ update_mastery
   ↓
 END
 ```
-
----
 
 # 9. API CONTRACTS
 
@@ -478,8 +412,6 @@ Response:
 }
 ```
 
----
-
 # 10. ENV CONFIG
 
 ```env
@@ -487,8 +419,6 @@ CLAUDE_API_KEY=
 DATABASE_URL=
 WEAVIATE_URL=
 ```
-
----
 
 # 11. NON-FUNCTIONAL REQUIREMENTS
 
@@ -498,15 +428,11 @@ WEAVIATE_URL=
 - retrieval < 500ms
 - answer < 3s
 
----
-
 ## Reliability
 
 - no hallucination
 - source-grounded answers
 - reproducible results
-
----
 
 ## Scalability
 
@@ -516,8 +442,6 @@ Future support:
 - reranker
 - multi-user
 
----
-
 # 12. FUTURE FEATURES
 
 ## Audio ingestion
@@ -526,23 +450,17 @@ Future support:
 audio → STT → text → chunk → embed
 ```
 
----
-
 ## Reranking
 
 ```text
 top 20 → reranker → top 5
 ```
 
----
-
 ## Quiz system
 
 - generate questions
 - evaluate answers
 - update mastery
-
----
 
 # 13. IMPLEMENTATION ORDER
 
@@ -560,8 +478,6 @@ top 20 → reranker → top 5
 12. mastery
 13. dashboard
 
----
-
 # 14. FINAL GOAL
 
 The system must achieve:
@@ -573,8 +489,6 @@ Upload document
 → See citation
 → Track learning progress
 ```
-
----
 
 # 15. SUMMARY
 
