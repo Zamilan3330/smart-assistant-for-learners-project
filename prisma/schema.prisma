@@ -1,0 +1,382 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../apps/web/src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Domain {
+  id             BigInt          @id @default(autoincrement())
+  code           String          @unique @db.VarChar(50)
+  name           String          @db.VarChar(255)
+  description    String?
+  version        Int             @default(1)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt      DateTime        @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  knowledgeAreas KnowledgeArea[]
+
+  @@map("domains")
+}
+
+model BokSource {
+  id          BigInt            @id @default(autoincrement())
+  sourceCode  String            @unique @map("source_code") @db.VarChar(50)
+  sourceName  String            @map("source_name") @db.VarChar(255)
+  description String?
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
+  kaMappings  KaSourceMapping[]
+
+  @@map("bok_sources")
+}
+
+model KnowledgeArea {
+  id                BigInt             @id @default(autoincrement())
+  domainId          BigInt             @map("domain_id")
+  kaCode            String             @unique @map("ka_code") @db.VarChar(100)
+  name              String             @db.VarChar(255)
+  description       String?
+  isCore            Boolean            @default(false) @map("is_core")
+  sortOrder         Int                @default(0) @map("sort_order")
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  flashcardAttempts FlashcardAttempt[]
+  sourceMappings    KaSourceMapping[]
+  domain            Domain             @relation(fields: [domainId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_knowledge_areas_domain")
+  knowledgeUnits    KnowledgeUnit[]
+  masteryEvidence   MasteryEvidence[]
+  quizAttempts      QuizAttempt[]
+  userMasteries     UserMastery[]
+
+  @@index([domainId], map: "idx_knowledge_areas_domain_id")
+  @@map("knowledge_areas")
+}
+
+model KaSourceMapping {
+  id              BigInt        @id @default(autoincrement())
+  knowledgeAreaId BigInt        @map("knowledge_area_id")
+  sourceId        BigInt        @map("source_id")
+  sourceReference String        @map("source_reference") @db.VarChar(255)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  knowledgeArea   KnowledgeArea @relation(fields: [knowledgeAreaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ka_source_mappings_ka")
+  source          BokSource     @relation(fields: [sourceId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_ka_source_mappings_source")
+
+  @@unique([knowledgeAreaId, sourceId, sourceReference], map: "uq_ka_source_mapping")
+  @@index([knowledgeAreaId], map: "idx_ka_source_mappings_knowledge_area_id")
+  @@index([sourceId], map: "idx_ka_source_mappings_source_id")
+  @@map("ka_source_mappings")
+}
+
+model KnowledgeUnit {
+  id                BigInt             @id @default(autoincrement())
+  knowledgeAreaId   BigInt             @map("knowledge_area_id")
+  kuCode            String             @unique @map("ku_code") @db.VarChar(120)
+  name              String             @db.VarChar(255)
+  description       String?
+  isCore            Boolean            @default(false) @map("is_core")
+  sortOrder         Int                @default(0) @map("sort_order")
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  flashcardAttempts FlashcardAttempt[]
+  knowledgeArea     KnowledgeArea      @relation(fields: [knowledgeAreaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_knowledge_units_ka")
+  learningOutcomes  LearningOutcome[]
+  masteryEvidence   MasteryEvidence[]
+  quizAttempts      QuizAttempt[]
+  topics            Topic[]
+  userKuMasteries   UserKuMastery[]
+
+  @@index([knowledgeAreaId], map: "idx_knowledge_units_knowledge_area_id")
+  @@map("knowledge_units")
+}
+
+model Topic {
+  id              BigInt            @id @default(autoincrement())
+  knowledgeUnitId BigInt            @map("knowledge_unit_id")
+  topicName       String            @map("topic_name") @db.VarChar(255)
+  description     String?
+  sortOrder       Int               @default(0) @map("sort_order")
+  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
+  masteryEvidence MasteryEvidence[]
+  knowledgeUnit   KnowledgeUnit     @relation(fields: [knowledgeUnitId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_topics_ku")
+
+  @@index([knowledgeUnitId], map: "idx_topics_knowledge_unit_id")
+  @@map("topics")
+}
+
+model LearningOutcome {
+  id              BigInt            @id @default(autoincrement())
+  knowledgeUnitId BigInt            @map("knowledge_unit_id")
+  outcomeText     String            @map("outcome_text")
+  sortOrder       Int               @default(0) @map("sort_order")
+  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
+  knowledgeUnit   KnowledgeUnit     @relation(fields: [knowledgeUnitId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_learning_outcomes_ku")
+  masteryEvidence MasteryEvidence[]
+
+  @@index([knowledgeUnitId], map: "idx_learning_outcomes_knowledge_unit_id")
+  @@map("learning_outcomes")
+}
+
+model User {
+  id                BigInt             @id @default(autoincrement())
+  email             String             @unique @db.VarChar(255)
+  fullName          String?            @map("full_name") @db.VarChar(255)
+  passwordHash      String?            @map("password_hash")
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  chatSessions      ChatSession[]
+  documents         Document[]
+  flashcardAttempts  FlashcardAttempt[]
+  flashcardSrsStates FlashcardSrsState[]
+  masteryEvidence    MasteryEvidence[]
+  quizAttempts       QuizAttempt[]
+  userKuMasteries    UserKuMastery[]
+  userMasteries      UserMastery[]
+
+  @@map("users")
+}
+
+model UserMastery {
+  id              BigInt        @id @default(autoincrement())
+  userId          BigInt        @map("user_id")
+  knowledgeAreaId BigInt        @map("knowledge_area_id")
+  masteryScore    Decimal       @default(0.0000) @map("mastery_score") @db.Decimal(5, 4)
+  confidenceScore Decimal       @default(0.0000) @map("confidence_score") @db.Decimal(5, 4)
+  evidenceCount   Int           @default(0) @map("evidence_count")
+  lastAssessedAt  DateTime?     @map("last_assessed_at") @db.Timestamp(6)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  knowledgeArea   KnowledgeArea @relation(fields: [knowledgeAreaId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_mastery_ka")
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_mastery_user")
+
+  @@unique([userId, knowledgeAreaId], map: "uq_user_mastery_user_ka")
+  @@index([knowledgeAreaId], map: "idx_user_mastery_knowledge_area_id")
+  @@index([userId], map: "idx_user_mastery_user_id")
+  @@map("user_mastery")
+}
+
+model Document {
+  id           BigInt            @id @default(autoincrement())
+  userId       BigInt            @map("user_id")
+  title        String            @db.VarChar(500)
+  sourceType   String            @map("source_type") @db.VarChar(50)
+  fileName     String?           @map("file_name") @db.VarChar(500)
+  mimeType     String?           @map("mime_type") @db.VarChar(100)
+  storagePath  String?           @map("storage_path")
+  rawText      String?           @map("raw_text")
+  fileSize     BigInt?           @map("file_size")
+  checksum     String?           @db.VarChar(128)
+  status       String            @default("uploaded") @db.VarChar(50)
+  errorMessage String?           @map("error_message")
+  createdAt    DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  chunks       DocumentChunk[]
+  pages        DocumentPage[]
+  user         User              @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_documents_user")
+  citations    MessageCitation[]
+
+  @@index([status], map: "idx_documents_status")
+  @@index([userId], map: "idx_documents_user_id")
+  @@map("documents")
+}
+
+model DocumentPage {
+  id            BigInt          @id @default(autoincrement())
+  documentId    BigInt          @map("document_id")
+  pageNumber    Int             @map("page_number")
+  extractedText String?         @map("extracted_text")
+  createdAt     DateTime        @default(now()) @map("created_at") @db.Timestamp(6)
+  chunks        DocumentChunk[]
+  document      Document        @relation(fields: [documentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_document_pages_document")
+
+  @@unique([documentId, pageNumber], map: "uq_document_pages_document_page")
+  @@index([documentId], map: "idx_document_pages_document_id")
+  @@map("document_pages")
+}
+
+model DocumentChunk {
+  id               BigInt            @id @default(autoincrement())
+  documentId       BigInt            @map("document_id")
+  pageId           BigInt?           @map("page_id")
+  pageNumber       Int?              @map("page_number")
+  chunkIndex       Int               @map("chunk_index")
+  chunkText        String            @map("chunk_text")
+  chunkHash        String?           @map("chunk_hash") @db.VarChar(128)
+  startOffset      Int?              @map("start_offset")
+  endOffset        Int?              @map("end_offset")
+  tokenCount       Int?              @map("token_count")
+  taxonomyMetadata Json?             @map("taxonomy_metadata")
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt        DateTime          @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  document         Document          @relation(fields: [documentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_document_chunks_document")
+  page             DocumentPage?     @relation(fields: [pageId], references: [id], onUpdate: NoAction, map: "fk_document_chunks_page")
+  citations        MessageCitation[]
+
+  @@unique([documentId, chunkIndex], map: "uq_document_chunks_document_chunk")
+  @@index([documentId], map: "idx_document_chunks_document_id")
+  @@index([pageNumber], map: "idx_document_chunks_page_number")
+  @@map("document_chunks")
+}
+
+model ChatSession {
+  id                BigInt             @id @default(autoincrement())
+  userId            BigInt             @map("user_id")
+  title             String?            @db.VarChar(255)
+  mode              String             @default("tutoring") @db.VarChar(50)
+  createdAt         DateTime           @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt         DateTime           @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  messages          ChatMessage[]
+  user              User               @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_chat_sessions_user")
+  flashcardAttempts FlashcardAttempt[]
+  masteryEvidence   MasteryEvidence[]
+  quizAttempts      QuizAttempt[]
+
+  @@index([userId], map: "idx_chat_sessions_user_id")
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id              BigInt            @id @default(autoincrement())
+  sessionId       BigInt            @map("session_id")
+  role            String            @db.VarChar(20)
+  content         String
+  messageType     String            @default("chat") @map("message_type") @db.VarChar(50)
+  createdAt       DateTime          @default(now()) @map("created_at") @db.Timestamp(6)
+  session         ChatSession       @relation(fields: [sessionId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_chat_messages_session")
+  masteryEvidence MasteryEvidence[]
+  citations       MessageCitation[]
+
+  @@index([sessionId], map: "idx_chat_messages_session_id")
+  @@map("chat_messages")
+}
+
+model MessageCitation {
+  id             BigInt        @id @default(autoincrement())
+  messageId      BigInt        @map("message_id")
+  documentId     BigInt        @map("document_id")
+  chunkId        BigInt        @map("chunk_id")
+  pageNumber     Int?          @map("page_number")
+  citationLabel  String        @map("citation_label") @db.VarChar(50)
+  excerptText    String        @map("excerpt_text")
+  relevanceScore Decimal?      @map("relevance_score") @db.Decimal(6, 4)
+  createdAt      DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  chunk          DocumentChunk @relation(fields: [chunkId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_message_citations_chunk")
+  document       Document      @relation(fields: [documentId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_message_citations_document")
+  message        ChatMessage   @relation(fields: [messageId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_message_citations_message")
+
+  @@index([documentId], map: "idx_message_citations_document_id")
+  @@index([messageId], map: "idx_message_citations_message_id")
+  @@map("message_citations")
+}
+
+model UserKuMastery {
+  id              BigInt        @id @default(autoincrement())
+  userId          BigInt        @map("user_id")
+  knowledgeUnitId BigInt        @map("knowledge_unit_id")
+  masteryScore    Decimal       @default(0.0000) @map("mastery_score") @db.Decimal(5, 4)
+  confidenceScore Decimal       @default(0.0000) @map("confidence_score") @db.Decimal(5, 4)
+  evidenceCount   Int           @default(0) @map("evidence_count")
+  lastAssessedAt  DateTime?     @map("last_assessed_at") @db.Timestamp(6)
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt       DateTime      @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  knowledgeUnit   KnowledgeUnit @relation(fields: [knowledgeUnitId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_ku_mastery_ku")
+  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_user_ku_mastery_user")
+
+  @@unique([userId, knowledgeUnitId], map: "uq_user_ku_mastery_user_ku")
+  @@index([knowledgeUnitId], map: "idx_user_ku_mastery_ku_id")
+  @@index([userId], map: "idx_user_ku_mastery_user_id")
+  @@map("user_ku_mastery")
+}
+
+model MasteryEvidence {
+  id                BigInt           @id @default(autoincrement())
+  userId            BigInt           @map("user_id")
+  sessionId         BigInt?          @map("session_id")
+  messageId         BigInt?          @map("message_id")
+  knowledgeAreaId   BigInt?          @map("knowledge_area_id")
+  knowledgeUnitId   BigInt?          @map("knowledge_unit_id")
+  topicId           BigInt?          @map("topic_id")
+  learningOutcomeId BigInt?          @map("learning_outcome_id")
+  evidenceType      String           @map("evidence_type") @db.VarChar(50)
+  scoreDelta        Decimal          @default(0.0000) @map("score_delta") @db.Decimal(5, 4)
+  confidenceDelta   Decimal          @default(0.0000) @map("confidence_delta") @db.Decimal(5, 4)
+  evidenceText      String?          @map("evidence_text")
+  metadata          Json?
+  createdAt         DateTime         @default(now()) @map("created_at") @db.Timestamp(6)
+  knowledgeArea     KnowledgeArea?   @relation(fields: [knowledgeAreaId], references: [id], onUpdate: NoAction, map: "fk_mastery_evidence_ka")
+  knowledgeUnit     KnowledgeUnit?   @relation(fields: [knowledgeUnitId], references: [id], onUpdate: NoAction, map: "fk_mastery_evidence_ku")
+  learningOutcome   LearningOutcome? @relation(fields: [learningOutcomeId], references: [id], onUpdate: NoAction, map: "fk_mastery_evidence_lo")
+  message           ChatMessage?     @relation(fields: [messageId], references: [id], onUpdate: NoAction, map: "fk_mastery_evidence_message")
+  session           ChatSession?     @relation(fields: [sessionId], references: [id], onUpdate: NoAction, map: "fk_mastery_evidence_session")
+  topic             Topic?           @relation(fields: [topicId], references: [id], onUpdate: NoAction, map: "fk_mastery_evidence_topic")
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_mastery_evidence_user")
+
+  @@index([knowledgeAreaId], map: "idx_mastery_evidence_ka_id")
+  @@index([knowledgeUnitId], map: "idx_mastery_evidence_ku_id")
+  @@index([messageId], map: "idx_mastery_evidence_message_id")
+  @@index([userId], map: "idx_mastery_evidence_user_id")
+  @@map("mastery_evidence")
+}
+
+model QuizAttempt {
+  id              BigInt         @id @default(autoincrement())
+  userId          BigInt         @map("user_id")
+  sessionId       BigInt?        @map("session_id")
+  knowledgeAreaId BigInt?        @map("knowledge_area_id")
+  knowledgeUnitId BigInt?        @map("knowledge_unit_id")
+  score           Decimal        @default(0.0000) @db.Decimal(5, 4)
+  totalQuestions  Int            @default(0) @map("total_questions")
+  correctAnswers  Int            @default(0) @map("correct_answers")
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  knowledgeArea   KnowledgeArea? @relation(fields: [knowledgeAreaId], references: [id], onUpdate: NoAction, map: "fk_quiz_attempts_ka")
+  knowledgeUnit   KnowledgeUnit? @relation(fields: [knowledgeUnitId], references: [id], onUpdate: NoAction, map: "fk_quiz_attempts_ku")
+  session         ChatSession?   @relation(fields: [sessionId], references: [id], onUpdate: NoAction, map: "fk_quiz_attempts_session")
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_quiz_attempts_user")
+
+  @@index([userId], map: "idx_quiz_attempts_user_id")
+  @@map("quiz_attempts")
+}
+
+model FlashcardSrsState {
+  id           BigInt   @id @default(autoincrement())
+  userId       BigInt   @map("user_id")
+  cardHash     String   @map("card_hash") @db.VarChar(64)
+  front        String   @map("front")
+  back         String   @map("back")
+  hint         String?
+  kuCode       String?  @map("ku_code") @db.VarChar(120)
+  kaCode       String?  @map("ka_code") @db.VarChar(100)
+  repetitions  Int      @default(0)
+  easeFactor   Decimal  @default(2.5000) @map("ease_factor") @db.Decimal(6, 4)
+  intervalDays Int      @default(1) @map("interval_days")
+  dueDate      DateTime @default(now()) @map("due_date") @db.Timestamp(6)
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamp(6)
+  updatedAt    DateTime @default(now()) @updatedAt @map("updated_at") @db.Timestamp(6)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@unique([userId, cardHash], map: "uq_flashcard_srs_user_card")
+  @@index([userId, dueDate], map: "idx_flashcard_srs_user_due")
+  @@map("flashcard_srs_states")
+}
+
+model FlashcardAttempt {
+  id              BigInt         @id @default(autoincrement())
+  userId          BigInt         @map("user_id")
+  sessionId       BigInt?        @map("session_id")
+  knowledgeAreaId BigInt?        @map("knowledge_area_id")
+  knowledgeUnitId BigInt?        @map("knowledge_unit_id")
+  promptText      String         @map("prompt_text")
+  expectedAnswer  String?        @map("expected_answer")
+  userAnswer      String?        @map("user_answer")
+  isCorrect       Boolean?       @map("is_correct")
+  score           Decimal        @default(0.0000) @db.Decimal(5, 4)
+  createdAt       DateTime       @default(now()) @map("created_at") @db.Timestamp(6)
+  knowledgeArea   KnowledgeArea? @relation(fields: [knowledgeAreaId], references: [id], onUpdate: NoAction, map: "fk_flashcard_attempts_ka")
+  knowledgeUnit   KnowledgeUnit? @relation(fields: [knowledgeUnitId], references: [id], onUpdate: NoAction, map: "fk_flashcard_attempts_ku")
+  session         ChatSession?   @relation(fields: [sessionId], references: [id], onUpdate: NoAction, map: "fk_flashcard_attempts_session")
+  user            User           @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "fk_flashcard_attempts_user")
+
+  @@index([userId], map: "idx_flashcard_attempts_user_id")
+  @@map("flashcard_attempts")
+}

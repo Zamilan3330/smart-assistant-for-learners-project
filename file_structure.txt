@@ -1,0 +1,97 @@
+smart-assistant/
+  apps/
+    web/
+      src/
+        app/
+        components/
+        features/
+        lib/
+        server/
+        styles/
+      public/
+      package.json
+      next.config.ts
+
+  services/
+    ai/
+      src/
+        graphs/
+        workflows/
+        agents/
+        retrieval/
+        prompts/
+        mastery/
+        assessments/
+        routes/
+        lib/
+        index.ts
+      package.json
+
+    worker/
+      src/
+        jobs/
+        processors/
+        parsers/
+        chunking/
+        indexing/
+        taxonomy/
+        lib/
+        index.ts
+      package.json
+
+  packages/
+    db/
+      prisma/
+        schema.prisma
+        migrations/
+      src/
+        client.ts
+        queries/
+        repositories/
+      package.json
+
+    shared/
+      src/
+        types/
+        constants/
+        enums/
+        schemas/
+        utils/
+      package.json
+
+    taxonomy/
+      src/
+        seed/
+        parsers/
+        mappers/
+        classifiers/
+      data/
+        it.yaml
+      package.json
+
+    ui/
+      src/
+        components/
+      package.json
+
+  infrastructure/
+    docker/
+      web.Dockerfile
+      ai.Dockerfile
+      worker.Dockerfile
+    compose/
+      docker-compose.dev.yml
+      docker-compose.prod.yml
+    k8s/
+      # daraa ni ashiglaj bolno
+
+  scripts/
+    seed-taxonomy.ts
+    create-demo-user.ts
+    reindex-documents.ts
+
+  .env
+  package.json
+  pnpm-workspace.yaml
+  turbo.json
+  README.md

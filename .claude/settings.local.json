@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "Read(//d/DIPLOMA/bachelor_latex/**)"
+    ],
+    "additionalDirectories": [
+      "D:\\DIPLOMA\\bachelor_latex"
+    ]
+  }
+}

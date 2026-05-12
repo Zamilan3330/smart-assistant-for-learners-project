@@ -1,0 +1,10 @@
+{
+  "enabledPlugins": {
+    "frontend-design@claude-plugins-official": true
+  },
+  "permissions": {
+    "allow": [
+      "Bash(timeout 25 npm run dev)"
+    ]
+  }
+}

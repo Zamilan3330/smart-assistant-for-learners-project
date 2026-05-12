@@ -1,0 +1,601 @@
+# it.yaml
+# Unified IT Body of Knowledge (BoK) — Canonical Taxonomy
+# Canonical KAs (12) + KU (Knowledge Units) + Topics + Learning Outcomes
+# Notes:
+# - core: true -> MVP дээр заавал идэвхжүүлэх нэгж
+# - source_map: тухайн нэгжийн эх сурвалжийн мөрдөх холбоос (traceability)
+
+version: 1
+domain:
+  id: IT
+  name: Information Technology (Unified)
+  description: >
+    ACM Computing Curricula баримтуудаас (CS2023, IT2017, CSEC2017, SEEK, DS2021, IS2020, CE-BoK)
+    нэгтгэн гаргасан IT домэйны нэгдсэн Body of Knowledge (BoK). Энэ taxonomy нь
+    AI Tutor/RAG суурьтай суралцах системийн personalization, mastery tracking-д зориулсан.
+  sources:
+    - name: CS2023
+      description: "Computer Science Curricula 2023 BoK (17 KAs)"
+    - name: IT2017
+      description: "Information Technology Curricula 2017 domains/subdomains"
+    - name: CSEC2017
+      description: "Cybersecurity Curricula 2017 (8 KAs)"
+    - name: SEEK
+      description: "Software Engineering Education Knowledge (KAs/KUs/topics)"
+    - name: DS2021
+      description: "Computing Competencies for Undergraduate Data Science Curricula (KAs/sub-domains)"
+    - name: IS2020
+      description: "Information Systems 2020 competency realms/areas"
+    - name: CE-BoK
+      description: "Computer Engineering BoK (KAs/KUs) — software/system-related хэсгүүдийг ашигласан"
+
+knowledge_areas:
+  - id: IT-KA-01
+    name: Programming Fundamentals
+    description: >
+      Программмчлалын үндэс, Программ боловсруулах суурь дадал, асуудал шийдвэрлэх үндсэн аргачлал.
+    core: true
+    source_map:
+      CS2023: [SDF, FPL]
+      IT2017: [ITE-SWF]
+      SEEK: [CMP.cf, CMP.ct]
+      CE-BoK: [CE-SWD]
+    knowledge_units:
+      - id: IT-KA-01-KU-01
+        name: Programming concepts and problem solving
+        core: true
+        topics:
+          - Variables, types, expressions, control flow
+          - Functions, modularization, scope
+          - Debugging basics, tracing, logging
+          - Problem decomposition and stepwise refinement
+        learning_outcomes:
+          - "Хувьсагч, нөхцөл, давталт, функц зэрэг үндсэн конструкцуудыг ашиглан жижиг Программ бичнэ."
+          - "Асуудлыг хэсэгчилж (decomposition) шийдвэрлэх алгоритмын шатлал гаргана."
+          - "Энгийн алдааг (syntax/runtime/logic) ялган, debugging хийж засварлана."
+
+      - id: IT-KA-01-KU-02
+        name: Programming paradigms and modern practices
+        core: false
+        topics:
+          - Object-oriented basics (classes/objects, encapsulation)
+          - Event-driven and reactive programming basics
+          - Scripting and automation (shell/python basics)
+          - Code style, readability, documentation
+        learning_outcomes:
+          - "OOP-ийн үндсэн ойлголтуудыг ашиглан энгийн загварчлал хийнэ."
+          - "Скрипт ашиглан давтагддаг ажлыг автоматжуулах жишээ боловсруулна."
+
+  - id: IT-KA-02
+    name: Data Structures & Algorithms
+    description: >
+      Өгөгдлийн бүтэц, алгоритмын стратеги, төвөгшлийн шинжилгээ, үндсэн тооцооллын онолын суурь.
+    core: true
+    source_map:
+      CS2023: [AL]
+      IT2017: [ITE-SWF]
+      CE-BoK: [CE-CAL]
+      SEEK: [CMP.cf]
+      DS2021: [PDA]
+    knowledge_units:
+      - id: IT-KA-02-KU-01
+        name: Fundamental data structures
+        core: true
+        topics:
+          - Arrays, linked lists, stacks, queues
+          - Hash tables and hashing intuition
+          - Trees (BST), heaps, priority queues
+          - Graph basics (representation, traversal)
+        learning_outcomes:
+          - "Түгээмэл өгөгдлийн бүтцүүдийг хэрэглэх нөхцөл, давуу/сул талыг тайлбарлана."
+          - "Оролтын хэмжээ өсөхөд ажиллагааны хугацаа/санах ой хэрхэн өөрчлөгдөхийг ойлгоно."
+
+      - id: IT-KA-02-KU-02
+        name: Algorithmic strategies and complexity
+        core: true
+        topics:
+          - Big-O notation and complexity classes (intro)
+          - Divide and conquer, greedy, dynamic programming (intro)
+          - Sorting/searching (classic algorithms)
+          - Basic scheduling algorithms (overview)
+        learning_outcomes:
+          - "Алгоритмын Big-O төвөгшлийг үндсэн түвшинд тооцоолж дүгнэнэ."
+          - "Түгээмэл стратеги (greedy/DP) аль нөхцөлд тохирохыг жишээгээр ялгана."
+
+      - id: IT-KA-02-KU-03
+        name: Parallelism (intro) and computability (intro)
+        core: false
+        topics:
+          - Parallel thinking (tasks/data parallel)
+          - Multi-threading basics (conceptual)
+          - Computability overview (what is computable)
+        learning_outcomes:
+          - "Параллель гүйцэтгэлийн үндсэн санааг жишээгээр тайлбарлана."
+
+  - id: IT-KA-03
+    name: Software Engineering
+    description: >
+      Программ хангамжийн хөгжүүлэлтийн амьдралын мөчлөг, шаардлага, дизайн, тест, чанар, төслийн дадал.
+    core: true
+    source_map:
+      CS2023: [SE]
+      SEEK: [REQ, DES, VAV, PRO, QUA, PRF, SEC]
+      IT2017: [ITE-SPA, ITE-GPP]
+      CE-BoK: [CE-SPE, CE-SWD]
+    knowledge_units:
+      - id: IT-KA-03-KU-01
+        name: Requirements engineering
+        core: true
+        topics:
+          - Requirements types and qualities (clear/testable)
+          - Elicitation techniques (interview, survey, prototype)
+          - User stories, acceptance criteria
+          - Requirements validation and change management
+        learning_outcomes:
+          - "Шаардлагын төрлүүдийг ялгаж, бичвэрийг тодорхой/шалгах боломжтой болгоно."
+          - "Elicitation аргуудаас тохирохыг сонгон хэрэглэнэ."
+
+      - id: IT-KA-03-KU-02
+        name: Software design & architecture
+        core: true
+        topics:
+          - Design principles (cohesion/coupling)
+          - Architectural styles (layered, client-server)
+          - Design patterns (overview)
+          - API design basics
+        learning_outcomes:
+          - "Системийн үндсэн архитектурын сонголтыг шаардлага/хязгаарлалтаар үндэслэнэ."
+          - "Кодын бүтэцлэлтийг дизайн зарчмаар сайжруулж тайлбарлана."
+
+      - id: IT-KA-03-KU-03
+        name: Verification, validation, testing
+        core: true
+        topics:
+          - Unit/integration/system testing
+          - Black-box vs white-box
+          - Test planning, regression testing
+          - Static analysis basics
+        learning_outcomes:
+          - "Тестийн түвшин бүрийн зорилго, жишээг тайлбарлана."
+          - "Энгийн unit test бичиж, regression ойлголтыг хэрэглэнэ."
+
+      - id: IT-KA-03-KU-04
+        name: Process, project, configuration management
+        core: false
+        topics:
+          - SDLC models (waterfall, agile)
+          - Estimation, scheduling, risk (intro)
+          - Version control basics, branching
+          - CI/CD overview
+        learning_outcomes:
+          - "Agile/Waterfall загваруудын ялгааг тайлбарлана."
+          - "Version control ашиглан багийн хөгжүүлэлт хийх үндсийг ойлгоно."
+
+  - id: IT-KA-04
+    name: Data Management & Databases
+    description: >
+      Өгөгдлийн амьдралын мөчлөг, өгөгдлийн загварчлал, SQL/NoSQL, өгөгдлийн хамгаалалт, тархмал өгөгдөл.
+    core: true
+    source_map:
+      CS2023: [DM]
+      IT2017: [ITE-IMA]
+      DS2021: [DG]
+      IS2020: [Data and Information Management]
+      CE-BoK: [CE-SWD]
+    knowledge_units:
+      - id: IT-KA-04-KU-01
+        name: Data modeling and relational databases
+        core: true
+        topics:
+          - ER modeling basics
+          - Relational model, keys, constraints
+          - Normalization (1NF–3NF overview)
+          - Transactions and ACID (intro)
+        learning_outcomes:
+          - "ER загвараас relational schema гаргана."
+          - "Normalization-ийн зорилгыг тайлбарлаж, энгийн жишээ дээр хэрэгжүүлнэ."
+
+      - id: IT-KA-04-KU-02
+        name: Querying and database operations
+        core: true
+        topics:
+          - SQL SELECT/JOIN/GROUP BY
+          - Indexing fundamentals (why/when)
+          - Query processing intuition (high level)
+          - Database security basics (roles/privileges)
+        learning_outcomes:
+          - "SQL асуулга зохиож өгөгдлөөс мэдээлэл гаргана."
+          - "Индексийн үр нөлөөг ойлгож, тохирох нөхцөлд хэрэглэх шалтгааныг тайлбарлана."
+
+      - id: IT-KA-04-KU-03
+        name: NoSQL and modern data systems (intro)
+        core: false
+        topics:
+          - Key-value, document, column stores (overview)
+          - CAP theorem intuition
+          - Data privacy and governance (intro)
+          - Semi-structured data (JSON)
+        learning_outcomes:
+          - "NoSQL төрлүүдийн онцлогийг богино жишээгээр ялгана."
+
+  - id: IT-KA-05
+    name: Networking & Communication
+    description: >
+      Сүлжээний суурь ойлголт, протокол, routing, үйлчилгээ, гүйцэтгэл, удирдлага, сүлжээний аюулгүй байдал.
+    core: true
+    source_map:
+      CS2023: [NC]
+      IT2017: [ITE-NET, ITS-ANE]
+      CE-BoK: [CE-NWK]
+      CSEC2017: [Connection Security]
+    knowledge_units:
+      - id: IT-KA-05-KU-01
+        name: Network fundamentals and architecture
+        core: true
+        topics:
+          - OSI/TCP-IP layering intuition
+          - IP addressing, subnets (intro)
+          - Routing vs switching (concept)
+          - DNS overview
+        learning_outcomes:
+          - "TCP/IP давхаргын үүргийг тайлбарлаж, түгээмэл протоколуудыг жишээлнэ."
+          - "Routing ба switching-ийн ялгааг ойлгоно."
+
+      - id: IT-KA-05-KU-02
+        name: Protocols and networked applications
+        core: true
+        topics:
+          - TCP vs UDP
+          - HTTP/HTTPS basics
+          - Reliability concepts (retransmission, congestion intuition)
+          - Client-server model and APIs (network perspective)
+        learning_outcomes:
+          - "TCP/UDP сонголтын үндэслэлийг хэрэглээний жишээгээр тайлбарлана."
+          - "HTTP хүсэлт-хариу урсгалыг үндсэн түвшинд тайлбарлана."
+
+      - id: IT-KA-05-KU-03
+        name: Wireless/mobility and network management (intro)
+        core: false
+        topics:
+          - Wireless basics (Wi-Fi, mobile overview)
+          - Network monitoring and logging (intro)
+          - Performance evaluation basics
+        learning_outcomes:
+          - "Сүлжээний мониторингийн зорилго, үндсэн метрикийг нэрлэнэ."
+
+  - id: IT-KA-06
+    name: Operating Systems & Platform Technologies
+    description: >
+      OS-ийн үүрэг, процесс/тред, scheduling, memory, file systems, virtualization, execution environment.
+    core: true
+    source_map:
+      CS2023: [OS, SF]
+      IT2017: [ITE-PFT]
+      CE-BoK: [CE-SRM]
+    knowledge_units:
+      - id: IT-KA-06-KU-01
+        name: OS principles and resource management
+        core: true
+        topics:
+          - Process model, threads, concurrency basics
+          - Scheduling (conceptual)
+          - Memory management (paging intuition)
+          - File systems basics
+        learning_outcomes:
+          - "Процесс ба тредийн ялгаа, concurrency-ийн суурь асуудлыг тайлбарлана."
+          - "Scheduling болон memory management-ийн зорилгыг жишээгээр тайлбарлана."
+
+      - id: IT-KA-06-KU-02
+        name: Virtualization and containers (intro)
+        core: true
+        topics:
+          - Virtual machines vs containers (concept)
+          - Isolation, namespaces, images (overview)
+          - Resource limits and monitoring (intro)
+        learning_outcomes:
+          - "VM ба container-ийн ялгаа, ашиглах нөхцөлийг тайлбарлана."
+
+      - id: IT-KA-06-KU-03
+        name: Platform execution environment
+        core: false
+        topics:
+          - Runtime concepts (JVM/Node/Python overview)
+          - Memory model basics (high level)
+          - Systems performance basics
+        learning_outcomes:
+          - "Runtime ойлголтын үүргийг (interpret/compile) ерөнхий түвшинд тайлбарлана."
+
+  - id: IT-KA-07
+    name: Cybersecurity
+    description: >
+      Кибер аюулгүй байдлын суурь зарчим, криптографи, secure coding, сүлжээ хамгаалалт, эрсдэлийн удирдлага.
+    core: true
+    source_map:
+      CS2023: [SEC]
+      IT2017: [ITE-CSP, ITS-CEC]
+      CSEC2017:
+        [
+          Data Security,
+          Software Security,
+          System Security,
+          Organizational Security,
+          Societal Security,
+        ]
+      SEEK: [SEC]
+      CE-BoK: [CE-SEC]
+    knowledge_units:
+      - id: IT-KA-07-KU-01
+        name: Foundational security concepts
+        core: true
+        topics:
+          - CIA triad and threat modeling (intro)
+          - Authentication vs authorization
+          - Access control basics
+          - Security principles (least privilege, defense in depth)
+        learning_outcomes:
+          - "CIA triad болон түгээмэл аюулын ойлголтыг жишээгээр тайлбарлана."
+          - "AuthN/AuthZ ялгааг хэрэглээний кейсээр тайлбарлана."
+
+      - id: IT-KA-07-KU-02
+        name: Cryptography and secure communications (intro)
+        core: true
+        topics:
+          - Symmetric/asymmetric crypto (overview)
+          - Hashing, MAC, signatures (overview)
+          - TLS/HTTPS intuition
+        learning_outcomes:
+          - "Криптографийн үндсэн төрлүүдийн зориулалтыг богино тайлбарлана."
+          - "HTTPS-ийн өндөр түвшний хамгаалалтын логикийг тайлбарлана."
+
+      - id: IT-KA-07-KU-03
+        name: Secure software and vulnerability basics
+        core: true
+        topics:
+          - Input validation, common vulnerabilities (OWASP-style overview)
+          - Secure coding mindset
+          - Static/dynamic testing basics
+          - Patch and dependency management (intro)
+        learning_outcomes:
+          - "Энгийн эмзэг байдлын шалтгаан, хамгаалах ерөнхий аргыг тайлбарлана."
+
+      - id: IT-KA-07-KU-04
+        name: Security operations and governance (intro)
+        core: false
+        topics:
+          - Risk assessment basics
+          - Incident response overview
+          - Policies and compliance basics
+          - Security logging and monitoring (intro)
+        learning_outcomes:
+          - "Risk/Incident response-ийн суурь үе шат, зорилгыг тайлбарлана."
+
+  - id: IT-KA-08
+    name: Web & Mobile Systems
+    description: >
+      Вэб/мобайл системийн суурь архитектур, хөгжүүлэлтийн үндэс, API, deployment ойлголт, аюулгүй байдлын үндэс.
+    core: false
+    source_map:
+      CS2023: [SPD, HCI]
+      IT2017: [ITE-WMS, ITS-MAP]
+      IS2020: [Web Development, Mobile Development]
+    knowledge_units:
+      - id: IT-KA-08-KU-01
+        name: Web architecture and development basics
+        core: false
+        topics:
+          - Client-server architecture
+          - REST APIs and JSON
+          - Authentication patterns (sessions/JWT overview)
+          - Common web vulnerabilities (overview)
+        learning_outcomes:
+          - "Вэб системийн client-server архитектурын урсгалыг тайлбарлана."
+
+      - id: IT-KA-08-KU-02
+        name: Mobile systems basics
+        core: false
+        topics:
+          - Mobile app architecture (overview)
+          - Notifications and backend integration (intro)
+          - Performance and resource constraints (intro)
+        learning_outcomes:
+          - "Мобайл апп-уудын онцлог хязгаарлалтыг (battery, memory) тайлбарлана."
+
+  - id: IT-KA-09
+    name: Cloud, Virtual Systems & Distributed Computing
+    description: >
+      Cloud үзэл баримтлал, тархмал системийн үндэс, scalability, reliability, virtualization, service models.
+    core: true
+    source_map:
+      CS2023: [PDC, DM (Distributed DB/Cloud)]
+      IT2017: [ITS-CCO, ITS-VSS, ITE-PFT]
+      DS2021: [BDS]
+      CE-BoK: [CE-CAO (Distributed architectures), CE-CAO-11]
+      CSEC2017: [Connection Security, System Security]
+    knowledge_units:
+      - id: IT-KA-09-KU-01
+        name: Distributed systems fundamentals
+        core: true
+        topics:
+          - Latency, throughput, availability (intro)
+          - Consistency basics and tradeoffs (high level)
+          - Replication and fault tolerance (overview)
+          - Coordination intuition (locks/consensus overview)
+        learning_outcomes:
+          - "Distributed system-ийн үндсэн tradeoff (latency/consistency/availability)-ийг тайлбарлана."
+          - "Fault tolerance-ийн санааг жишээгээр тайлбарлана."
+
+      - id: IT-KA-09-KU-02
+        name: Cloud computing models and practices
+        core: true
+        topics:
+          - IaaS/PaaS/SaaS
+          - Scaling basics (horizontal vs vertical)
+          - Observability basics (logs/metrics/traces overview)
+          - Cost awareness (intro)
+        learning_outcomes:
+          - "Cloud service model-уудын ялгааг хэрэглээний жишээгээр тайлбарлана."
+
+      - id: IT-KA-09-KU-03
+        name: Virtualization and service infrastructure
+        core: false
+        topics:
+          - Server virtualization and images
+          - Network virtualization (overview)
+          - Storage concepts (object/block/file)
+        learning_outcomes:
+          - "Үндсэн storage төрлүүдийн ялгааг тайлбарлана."
+
+  - id: IT-KA-10
+    name: Human–Computer Interaction & UX
+    description: >
+      Хэрэглэгч төвтэй дизайн, ашиглахад хялбар байдал, accessibility, UX үнэлгээ, интерфэйсийн зарчим.
+    core: false
+    source_map:
+      CS2023: [HCI, GIT (interaction/visualization)]
+      IT2017: [ITE-UXD]
+      IS2020: [User Interface Design]
+      SEEK: [DES.hci]
+    knowledge_units:
+      - id: IT-KA-10-KU-01
+        name: UX principles and user-centered design
+        core: false
+        topics:
+          - UCD process (research → design → evaluate)
+          - Usability heuristics (overview)
+          - Accessibility and inclusive design basics
+          - UX metrics and evaluation methods (intro)
+        learning_outcomes:
+          - "UCD урсгалыг тайлбарлаж, энгийн UX үнэлгээний төлөвлөгөө гаргана."
+
+      - id: IT-KA-10-KU-02
+        name: Interaction and interface design basics
+        core: false
+        topics:
+          - Information architecture basics
+          - Visual design fundamentals (layout, hierarchy)
+          - Prototyping tools/process (overview)
+        learning_outcomes:
+          - "UI-ийн үндсэн зарчмуудыг ашиглан интерфэйсийн энгийн прототип тайлбарлана."
+
+  - id: IT-KA-11
+    name: AI & Data Science
+    description: >
+      AI/ML суурь ойлголт, өгөгдөл боловсруулах, сургалтын арга, үнэлгээ, өгөгдлийн масштаб, хариуцлагатай хэрэглээ.
+    core: true
+    source_map:
+      CS2023: [AI]
+      DS2021: [ML, DM, DG, BDS, AP]
+      IT2017: [ITS-DSA]
+    knowledge_units:
+      - id: IT-KA-11-KU-01
+        name: Data preparation and analysis
+        core: true
+        topics:
+          - Data cleaning and transformation
+          - Feature engineering intuition
+          - Exploratory data analysis (EDA) basics
+          - Visualization for insight (intro)
+        learning_outcomes:
+          - "Өгөгдөл цэвэрлэх/хувиргах үндсэн алхмуудыг тайлбарлаж жишээ гаргана."
+
+      - id: IT-KA-11-KU-02
+        name: Machine learning fundamentals
+        core: true
+        topics:
+          - Supervised vs unsupervised learning (overview)
+          - Training/validation/testing split
+          - Evaluation metrics (accuracy, precision/recall intuition)
+          - Overfitting and regularization (concept)
+        learning_outcomes:
+          - "ML сургалтын үндсэн урсгал болон үнэлгээний ойлголтыг тайлбарлана."
+          - "Overfitting асуудлыг тайлбарлаж, энгийн бууруулах аргыг нэрлэнэ."
+
+      - id: IT-KA-11-KU-03
+        name: Knowledge representation and AI reasoning (intro)
+        core: false
+        topics:
+          - Search basics (BFS/DFS intuition)
+          - Probabilistic reasoning overview
+          - NLP/CV overview
+          - Societal impact and responsible AI (intro)
+        learning_outcomes:
+          - "AI-ийн хэрэглээ ба эрсдэлийн жишээг нэрлэнэ."
+
+      - id: IT-KA-11-KU-04
+        name: Big data systems (intro)
+        core: false
+        topics:
+          - Distributed storage overview
+          - Parallel computing frameworks (concept)
+          - Cloud-based data pipelines (intro)
+        learning_outcomes:
+          - "Том өгөгдлийн системийн үндсэн асуудлууд (scale) болон шийдлүүдийг тоймлон өгүүлнэ."
+
+  - id: IT-KA-12
+    name: Professional Practice, Ethics, Law & Governance
+    description: >
+      Мэргэжлийн ёс зүй, хууль эрх зүй, хувийн мэдээлэл хамгаалалт, байгууллагын бодлого, төслийн харилцаа, багийн ажил.
+    core: true
+    source_map:
+      CS2023: [SEP]
+      IT2017: [ITE-GPP, ITE-CSP (policy/privacy), ITS-SRE]
+      CSEC2017: [Organizational Security, Societal Security]
+      IS2020:
+        [
+          IS Ethics,
+          Sustainability,
+          Use and Implications for Society,
+          IS Management and Strategy,
+          IS Project Management,
+        ]
+      CE-BoK: [CE-PPP, CE-SPE]
+      SEEK: [PRF]
+    knowledge_units:
+      - id: IT-KA-12-KU-01
+        name: Professional ethics and responsible computing
+        core: true
+        topics:
+          - Professional ethics, codes of conduct (overview)
+          - Privacy, civil liberties (intro)
+          - Sustainability and social impact (intro)
+          - Communication in technical contexts (intro)
+        learning_outcomes:
+          - "Мэргэжлийн ёс зүйн зарчмуудыг IT кейс дээр тайлбарлаж, шийдвэр гаргалттай холбож өгүүлнэ."
+
+      - id: IT-KA-12-KU-02
+        name: Legal and policy basics (intro)
+        core: false
+        topics:
+          - Intellectual property basics
+          - Cyber law and compliance overview
+          - Security policies and governance basics
+        learning_outcomes:
+          - "IT орчин дахь IP/privacy/compliance ойлголтын зорилгыг өндөр түвшинд тайлбарлана."
+
+      - id: IT-KA-12-KU-03
+        name: Project, teamwork, and management (intro)
+        core: true
+        topics:
+          - Teamwork and collaboration basics
+          - Project planning and risk overview
+          - Stakeholders and requirements communication
+        learning_outcomes:
+          - "Багийн ажил, stakeholder харилцаа, төслийн эрсдэлийн суурь ойлголтыг тайлбарлана."
+
+mvp_profile_suggestion:
+  name: "MVP-Core (recommended)"
+  enabled_knowledge_areas:
+    - IT-KA-01 # Programming Fundamentals
+    - IT-KA-02 # Data Structures & Algorithms
+    - IT-KA-03 # Software Engineering
+    - IT-KA-04 # Data Management & Databases
+    - IT-KA-05 # Networking & Communication
+    - IT-KA-06 # Operating Systems & Platform Technologies
+    - IT-KA-07 # Cybersecurity
+    - IT-KA-09 # Cloud/Distributed (core subset)
+    - IT-KA-11 # AI & Data Science (core subset)
+    - IT-KA-12 # Professional Practice/Ethics/Governance
+  notes: >
+    MVP дээр Web/Mobile (IT-KA-08), HCI/UX (IT-KA-10) зэрэг KA-уудыг optional байдлаар
+    аажмаар нэмж өргөтгөнө. CE-ийн hardware-heavy хэсгүүдийг тусдаа optional domain болгон
+    дараагийн шатанд тусгах боломжтой.

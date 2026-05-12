@@ -1,0 +1,40 @@
+{
+  "name": "project",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "scripts": {
+    "dev:web": "npm run dev --prefix apps/web",
+    "dev:worker": "tsx worker/index.ts",
+    "dev": "concurrently \"npm run dev:web\" \"npm run dev:worker\"",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "seed:taxonomy": "tsx scripts/seed-taxonomy.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.80.0",
+    "@huggingface/transformers": "^3.8.1",
+    "@prisma/client": "^6.19.2",
+    "bullmq": "^5.70.4",
+    "dotenv": "^17.3.1",
+    "pdf-parse": "^2.4.5",
+    "pino": "^10.3.1",
+    "prisma": "^6.19.2",
+    "unpdf": "^1.4.0",
+    "weaviate-client": "^3.12.0",
+    "yaml": "^2.8.2",
+    "zod": "^4.3.6"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.5",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

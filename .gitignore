@@ -1,0 +1,36 @@
+# Environment configs
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build outputs
+.next/
+dist/
+out/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+# Prisma generated client
+/lib/generated/prisma/
+
+# Uploads
+/uploads/
+
+# Cache
+.turbo/
+.cache/
+.eslintcache
